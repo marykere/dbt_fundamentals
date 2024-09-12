@@ -32,10 +32,17 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   jaffle_shop:
     # Config indicated by + and applies to all files under models/example/
+    +required_tests: {"unique.*|not_null": 2}
     marts:
       +materialized: table
     staging:
       +materialized: view
+
+
+data_tests:
+  jaffle_shop:
+    +severity: warn
+    +store_failures: true 
       
 
 

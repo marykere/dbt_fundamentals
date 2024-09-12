@@ -1,10 +1,10 @@
-with customers as (
+with customers as (  -- these are import CTEs 
     select * from {{ ref ('stg_jaffle_shop__customers')}}
 ),
 orders as (
     select * from {{ ref ('fct_orders')}}
 ),
-customer_orders as (
+customer_orders as ( --taking information from the orders table that we need 
     select
         customer_id,
         min (order_date) as first_order_date,
@@ -14,7 +14,7 @@ customer_orders as (
     from orders
     group by 1
 ),
- final as (
+ final as ( --taking information from the customers table that we need 
     select
         customers.customer_id,
         customers.first_name,
@@ -24,7 +24,8 @@ customer_orders as (
         coalesce (customer_orders.number_of_orders, 0) as number_of_orders,
         customer_orders.lifetime_value
     from customers
-    left join customer_orders using (customer_id)
+    left join customer_orders using (customer_id) 
+    --left join extracted information from customer_order CTEs
 )
 select * from final
 
