@@ -1,12 +1,7 @@
-with payments as (
-    select * from {{ref('stg_stripe__payments')}}
-)
-SELECT
+
+select
     order_id,
     sum(amount) as total_amount
-from 
-    stg_stripe__payments
-group by
-    order_id
-having 
-    total_amount > 0
+from {{ ref('fct_orders' )}}
+group by 1
+having not(total_amount >= 0)

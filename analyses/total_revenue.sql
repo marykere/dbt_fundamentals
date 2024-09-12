@@ -1,11 +1,10 @@
-select
-    id as payment_id,
-    orderid as order_id,
-    paymentmethod as payment_method,
-    status,
+with payments as(
+    select * from {{ref('stg_stripe__payments')}}
+)
 
-    -- amount is stored in cents, convert it to dollars
-    {{ cents_to_dollars(amount, 4) }} as amount,
-    created as created_at
-where status ='success'
-from {{source('stripe', 'payment')}} 
+aggregated as (
+    select sum(amount) as total_revenue from payments
+    where status ='success'
+)
+
+select * from aggregated
